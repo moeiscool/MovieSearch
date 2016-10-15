@@ -34,7 +34,7 @@ $('#theform').submit(function(e){//the submit function
     e.e.children().prop('disabled',true)//disable all inputs and buttons so the user can't keep hitting submit
     
     
-    $.post('http://www.omdbapi.com/?s='+e.v,function(d){//send off the data to the Movie Database URL. the variable "d" will be the returned data.
+    $.post('//www.omdbapi.com/?s='+e.v,function(d){//send off the data to the Movie Database URL. the variable "d" will be the returned data.
         
         e.e.children().prop('disabled',false)//enable inputs and buttons because the post is complete.
         
