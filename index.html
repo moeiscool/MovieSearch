@@ -1,0 +1,66 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<form id="theform">
+    <input class="form-control" type="text" name="searchBox">
+    <button type="submit" class="btn btn-block btn-primary">Submit</button>
+</form>
+<h1>Human Viewable Data (JSON string)</h1>
+<table id="data" class="table table-striped table-bordered">
+    <thead>
+        <th>Poster</th>
+        <th>Title</th>
+        <th>Year</th>
+        <th>IMDB ID</th>
+        <th>Type</th>
+    </thead>
+    <tbody></tbody>
+</table>
+    
+<h1>Raw Data (JSON string)</h1>
+<div id="rawdata"></div>
+</body>
+<script>
+$('#theform').submit(function(e){//the submit function
+    
+    e.preventDefault();//stop the form from refreshing the page and allow you to use AJAX ($.post)
+    
+    e.e=$(this)//faster use of the form element
+    e.s=e.e.serializeArray()//all the form elements put into an array
+    e.v=encodeURIComponent(e.s[0].value)//the first element in the form's value and convert into a websafe string
+    
+    e.e.children().prop('disabled',true)//disable all inputs and buttons so the user can't keep hitting submit
+    
+    
+    $.post('http://www.omdbapi.com/?s='+e.v,function(d){//send off the data to the Movie Database URL. the variable "d" will be the returned data.
+        
+        e.e.children().prop('disabled',false)//enable inputs and buttons because the post is complete.
+        
+        $('#rawdata').html(JSON.stringify(d))//show raw returned data as a string under the human readable table
+        d.tmp='';//make a blank temp string
+        $.each(d.Search,function(n,v){//go through all the results in the array
+            d.tmp+='<tr>';//table row start
+            d.tmp+='<td><img src="'+v.Poster+'"></td>';
+            d.tmp+='<td>'+v.Title+'</td>';
+            d.tmp+='<td>'+v.Year+'</td>';
+            d.tmp+='<td>'+v.imdbID+'</td>';
+            d.tmp+='<td>'+v.Type+'</td>';
+            d.tmp+='<tr>';//table row end
+        })
+        console.log(d)//if you use google chrome hit F12 and click Console it will show you events, and you can test javascript there too
+        
+        $('#data tbody').html(d.tmp) //select id "data" then the child tag "tbody" and replace all data inside the table with temp string
+    })
+    return false;//this is meant to serve the same purpose as "e.preventDefault()" but sometimes "e.preventDefault()" does not work in firefox.
+})
+</script>
+
+<style>
+/*    Images only inside the #data table*/
+/*   default */
+    #data img{max-height:100px;transition:0.2s}
+/*    on hover*/
+    #data img:hover{max-height:500px;border-radius:10px}
+</style>
